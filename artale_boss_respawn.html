@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楓之谷Artale野王重生時間計算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .settings-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .settings-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 25px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .input-field {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .input-field label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        .input-field input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-field input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .boss-selection {
+            background: #f8f9fa;
+            padding: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .selection-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+        
+        .selection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .selection-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .selection-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .selection-buttons button {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .selection-buttons button:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .boss-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .checkbox-item:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .checkbox-item label {
+            cursor: pointer;
+            user-select: none;
+            font-size: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .calculate-section {
+            padding: 30px;
+            background: #f8f9fa;
+            text-align: center;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .calculate-btn {
+            padding: 16px 60px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        
+        .boss-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f0f2f5;
+        }
+        
+        .boss-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .boss-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        
+        .boss-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .boss-info {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .wave {
+            background: #f8f9fa;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .wave-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .wave-time {
+            color: #555;
+            font-size: 15px;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            font-size: 18px;
+            grid-column: 1 / -1;
+        }
+        
+        @media (max-width: 768px) {
+            .input-row {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .input-field {
+                min-width: 100%;
+            }
+            
+            .boss-checkboxes {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .boss-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍁 楓之谷Artale野王重生時間計算器</h1>
+            <p>輸入維護結束時間與計算波次，選擇要追蹤的野王，即可自動計算重生時間表</p>
+        </div>
+        
+        <div class="settings-section">
+            <div class="settings-title">⚙️ 基本設定</div>
+            <div class="input-row">
+                <div class="input-field">
+                    <label for="maintenanceTime">維護結束時間</label>
+                    <input type="datetime-local" id="maintenanceTime">
+                </div>
+                <div class="input-field">
+                    <label for="waveCount">計算波次數量</label>
+                    <input type="number" id="waveCount" value="5" min="1" max="10">
+                </div>
+            </div>
+        </div>
+        
+        <div class="boss-selection">
+            <div class="settings-title">🎯 選擇要計算的野王</div>
+            <div class="selection-container">
+                <div class="selection-header">
+                    <h3>請勾選要追蹤的野王</h3>
+                    <div class="selection-buttons">
+                        <button onclick="selectAll()">全選</button>
+                        <button onclick="deselectAll()">取消全選</button>
+                    </div>
+                </div>
+                <div class="boss-checkboxes" id="bossCheckboxes"></div>
+            </div>
+        </div>
+        
+        <div class="calculate-section">
+            <button class="calculate-btn" onclick="calculateRespawns()">🔄 計算重生時間</button>
+        </div>
+        
+        <div class="boss-grid" id="bossGrid">
+            <div class="no-data">請完成上方設定並點擊「計算重生時間」按鈕</div>
+        </div>
+    </div>
+
+    <script>
+        const bosses = [
+            { name: '紅寶王', minMinutes: 23, maxMinutes: 30, displayTime: '23分鐘 ~ 30分鐘' },
+            { name: '樹妖王', minMinutes: 23, maxMinutes: 30, displayTime: '23分鐘 ~ 30分鐘' },
+            { name: '殭屍猴王', minMinutes: 38, maxMinutes: 45, displayTime: '38分鐘 ~ 45分鐘' },
+            { name: '巨居蟹', minMinutes: 45, maxMinutes: 60, displayTime: '45分鐘 ~ 1小時' },
+            { name: '冥界幽靈', minMinutes: 45, maxMinutes: 60, displayTime: '45分鐘 ~ 1小時' },
+            { name: '咕咕鐘', minMinutes: 68, maxMinutes: 90, displayTime: '1小時8分鐘 ~ 1小時30分鐘' },
+            { name: '仙人娃娃', minMinutes: 158, maxMinutes: 180, displayTime: '2小時38分鐘 ~ 3小時' },
+            { name: '喵怪仙人', minMinutes: 150, maxMinutes: 170, displayTime: '2小時30分鐘 ~ 2小時50分鐘' },
+            { name: '蘑菇王', minMinutes: 210, maxMinutes: 240, displayTime: '3小時30分鐘 ~ 4小時' },
+            { name: '書生幽靈', minMinutes: 150, maxMinutes: 300, displayTime: '2小時30分鐘 ~ 5小時' },
+            { name: '巨大深山人參', minMinutes: 60, maxMinutes: 135, displayTime: '1小時 ~ 2小時15分鐘' },
+            { name: '雪山魔女', minMinutes: 158, maxMinutes: 180, displayTime: '2小時38分鐘 ~ 3小時' },
+            { name: '沼澤巨鱷', minMinutes: 90, maxMinutes: 105, displayTime: '1小時30分鐘 ~ 1小時45分鐘' },
+            { name: '殭屍蘑菇王', minMinutes: 195, maxMinutes: 225, displayTime: '3小時15分鐘 ~ 3小時45分鐘' },
+            { name: '厄運死神', minMinutes: 45, maxMinutes: 105, displayTime: '45分鐘 ~ 1小時45分鐘' },
+            { name: '葛雷金剛', minMinutes: 270, maxMinutes: 350, displayTime: '4小時30分鐘 ~ 5小時50分鐘' },
+            { name: '九尾妖狐', minMinutes: 210, maxMinutes: 570, displayTime: '3小時30分鐘 ~ 9小時30分鐘' },
+            { name: '肯德熊', minMinutes: 113, maxMinutes: 128, displayTime: '1小時53分鐘 ~ 2小時8分鐘' },
+            { name: '巴洛古', minMinutes: 405, maxMinutes: 540, displayTime: '6小時45分鐘 ~ 9小時' },
+            { name: '艾利傑', minMinutes: 118, maxMinutes: 128, displayTime: '1小時58分鐘 ~ 2小時8分鐘' },
+            { name: '黑輪王', minMinutes: 780, maxMinutes: 1020, displayTime: '13小時 ~ 17小時' },
+            { name: '雪毛怪人', minMinutes: 45, maxMinutes: 68, displayTime: '45分鐘 ~ 1小時8分鐘' },
+            { name: '瘋狂喵z客', minMinutes: 120, maxMinutes: 420, displayTime: '2小時 ~ 7小時' },
+            { name: '海怒斯', minMinutes: 180, maxMinutes: 300, displayTime: '3小時 ~ 5小時' }
+        ];
+
+        function initCheckboxes() {
+            const container = document.getElementById('bossCheckboxes');
+            bosses.forEach((boss, index) => {
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+                div.onclick = function(e) {
+                    if (e.target.tagName !== 'INPUT') {
+                        const checkbox = this.querySelector('input');
+                        checkbox.checked = !checkbox.checked;
+                    }
+                };
+                div.innerHTML = `
+                    <input type="checkbox" id="boss${index}" checked onclick="event.stopPropagation()">
+                    <label for="boss${index}">${boss.name}</label>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function selectAll() {
+            bosses.forEach((boss, index) => {
+                document.getElementById(`boss${index}`).checked = true;
+            });
+        }
+
+        function deselectAll() {
+            bosses.forEach((boss, index) => {
+                document.getElementById(`boss${index}`).checked = false;
+            });
+        }
+
+        function calculateRespawns() {
+            const maintenanceInput = document.getElementById('maintenanceTime').value;
+            if (!maintenanceInput) {
+                alert('請輸入維護結束時間！');
+                return;
+            }
+
+            const waveCount = parseInt(document.getElementById('waveCount').value);
+            if (!waveCount || waveCount < 1) {
+                alert('請輸入有效的波次數量！');
+                return;
+            }
+
+            const maintenanceTime = new Date(maintenanceInput);
+            const grid = document.getElementById('bossGrid');
+            grid.innerHTML = '';
+
+            let hasSelected = false;
+
+            bosses.forEach((boss, index) => {
+                const checkbox = document.getElementById(`boss${index}`);
+                if (!checkbox.checked) return;
+
+                hasSelected = true;
+
+                const card = document.createElement('div');
+                card.className = 'boss-card';
+
+                let cardHTML = `
+                    <div class="boss-name">${boss.name}</div>
+                    <div class="boss-info">重生時間：${boss.displayTime}</div>
+                `;
+
+                let prevEndTime = new Date(maintenanceTime);
+
+                for (let wave = 1; wave <= waveCount; wave++) {
+                    const startTimeMin = new Date(prevEndTime.getTime() + boss.minMinutes * 60000);
+                    const startTimeMax = new Date(prevEndTime.getTime() + boss.maxMinutes * 60000);
+
+                    cardHTML += `
+                        <div class="wave">
+                            <div class="wave-title">第 ${wave} 波</div>
+                            <div class="wave-time">
+                                ${formatDateTime(startTimeMin)} ~ ${formatDateTime(startTimeMax)}
+                            </div>
+                        </div>
+                    `;
+
+                    prevEndTime = startTimeMax;
+                }
+
+                card.innerHTML = cardHTML;
+                grid.appendChild(card);
+            });
+
+            if (!hasSelected) {
+                grid.innerHTML = '<div class="no-data">請至少選擇一個野王</div>';
+            }
+        }
+
+        function formatDateTime(date) {
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${month}/${day} ${hours}:${minutes}`;
+        }
+
+        // 設定預設時間為今天中午12:00
+        window.onload = function() {
+            const now = new Date();
+            now.setHours(12, 0, 0, 0);
+            const formatted = now.toISOString().slice(0, 16);
+            document.getElementById('maintenanceTime').value = formatted;
+            initCheckboxes();
+        };
+    </script>
+</body>
+</html>
